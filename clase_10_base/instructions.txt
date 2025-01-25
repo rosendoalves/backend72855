@@ -1,0 +1,51 @@
+1. Create src and server.js
+2. Run npm init
+3. Install express
+
+import express from "express";
+import { createServer } from "http";
+
+const server = express();
+const port = 8080;  
+const ready = () => {
+  console.log(`Server running on port ${port}`);
+}
+const nodeServer = createServer(server);
+nodeServer = server.listen(port, ready);
+
+4. Config with middlewares
+
+import morgan from "morgan";
+
+
+server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
+server.use(morgan("dev"));
+
+5. Add endpoints
+
+    a. Create routers
+
+        src/routers/index.router.js
+
+        import { Router } from "express";
+        import apiRouter from "./api/index.api.js";
+        import viewsRouter from "./views/index.view.js";
+
+        const indexRouter = Router();
+
+        indexRouter.use("/api", apiRouter);
+        indexRouter.use("/", viewsRouter);
+
+        export default indexRouter;
+
+
+import indexRouter from "./src/routers/index.router.js";
+import errorHandler from "./src/middlewares/errorHandler.mid.js";
+import pathHandler from "./src/middlewares/pathHandler.mid.js";
+import __dirname from "./utils.js";
+
+//endpoints
+server.use("/", indexRouter);
+server.use(errorHandler);
+server.use(pathHandler);
